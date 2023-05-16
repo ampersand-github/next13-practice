@@ -32,7 +32,7 @@ const posts = [
 
 export default async function TutorialPage() {
   const session = await getCurrentUser();
-  const data = await db.user.findMany();
+  const data = await db.user.findMany({ where: { id: session?.id } });
 
   return (
     <main className="flex flex-col items-center justify-between p-24 space-y-8">
@@ -98,6 +98,7 @@ export default async function TutorialPage() {
         </div>
       </div>
 
+      <p>{JSON.stringify(data)}</p>
       <Suspense fallback={<>loading...</>}>
         {/* @ts-expect-error Async Server Component */}
         <Data data={data} />
