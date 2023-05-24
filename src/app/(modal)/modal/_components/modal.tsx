@@ -14,12 +14,14 @@ import {
 import "cropperjs/dist/cropper.css";
 import React, { createRef, useState } from "react";
 import Cropper, { ReactCropperElement } from "react-cropper";
+import { ulid } from "ulid";
 
 export const DialogDemo = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [image, setImage] = React.useState<File>();
   const [trimmedImage, setTrimmedImage] = useState<File>();
   const cropperRef = createRef<ReactCropperElement>();
+  const [_image, _setImage] = React.useState<File>();
 
   const handleClose = () => {
     setIsOpen(false);
@@ -38,27 +40,49 @@ export const DialogDemo = () => {
     setIsOpen(true);
   };
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (!e.target.files) return;
     setImage(e.target.files[0]);
     setIsOpen(true);
+    _setImage(e.target.files[0]);
   };
 
   const convertDataUrlToFile = async (
     dataURL: string,
-    filename: string
+    filename: string,
+    type: "image/png" | "image/jpeg"
   ): Promise<File> => {
     const blob = await (await fetch(dataURL)).blob();
-    return new File([blob], filename);
+    return new File([blob], filename, { type: type });
   };
 
   const getTrimmedImage = async () => {
     if (!cropperRef.current) return;
     const canvas = cropperRef.current.cropper.getCroppedCanvas();
     const dataURL = canvas.toDataURL();
-    const file = await convertDataUrlToFile(dataURL, "image.png");
+    const file = await convertDataUrlToFile(dataURL, "image.png", "image/png");
     setTrimmedImage(file);
+  };
+
+  const uploadOneImage = async (
+    // filePath: string,
+    // fileName: string,
+    image: File
+  ): Promise<Response> => {
+    const fileName = ulid().toString();
+    const origin = window.location.origin;
+    const signUrl = `${origin}/api/storage?file=${fileName}`; // APIのほうに回してもいいかも
+    const res = await fetch(signUrl, { method: "GET" });
+    if (!res.ok) throw new Error("Failed to get signed url.");
+
+    const { url, fields } = await res.json();
+    const body = new FormData();
+    Object.entries({ ...fields }).forEach(([key, value]) => {
+      body.append(key, value as string);
+    });
+    body.append("file", image);
+    return await fetch(url, { method: "POST", body });
   };
 
   return (
@@ -128,7 +152,33 @@ export const DialogDemo = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <img src={trimmedImage && URL.createObjectURL(trimmedImage)} alt="" />
+
+      {trimmedImage && (
+        <>
+          <img src={URL.createObjectURL(trimmedImage)} alt="" />
+          <button
+            type={"button"}
+            onClick={async () => {
+              await uploadOneImage(trimmedImage);
+            }}
+          >
+            GCSに送信
+          </button>
+        </>
+      )}
+      {_image && (
+        <>
+          <img src={URL.createObjectURL(_image)} alt="" />
+          <button
+            type={"button"}
+            onClick={async () => {
+              await uploadOneImage(_image);
+            }}
+          >
+            GCSに元画像を送信
+          </button>
+        </>
+      )}
     </div>
   );
 };
