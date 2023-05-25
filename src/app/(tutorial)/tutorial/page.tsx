@@ -2,7 +2,8 @@ import { Data } from "@/app/(auth)/login/_components/get-api-data";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { Metadata } from "next";
-import React, { Suspense } from "react";
+import Image from "next/image";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Tutorial",
@@ -35,7 +36,7 @@ export default async function TutorialPage() {
   const data = await db.user.findMany({ where: { id: session?.id } });
 
   return (
-    <main className="flex flex-col items-center justify-between p-24 space-y-8">
+    <main className="flex flex-col items-center justify-between space-y-8 p-24">
       <h1>Tutorial Page</h1>
 
       <div className="bg-white py-24 sm:py-32">
@@ -77,7 +78,7 @@ export default async function TutorialPage() {
                   </p>
                 </div>
                 <div className="relative mt-8 flex items-center gap-x-4">
-                  <img
+                  <Image
                     src={post.author.imageUrl}
                     alt=""
                     className="h-10 w-10 rounded-full bg-gray-50"

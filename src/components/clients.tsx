@@ -10,10 +10,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AvatarProps } from "@radix-ui/react-avatar";
 import { User2Icon } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface UserAccountNavProps {
   name?: string | null;
@@ -97,12 +96,12 @@ export const GithubButton = () => {
     <>
       {isGitHubLoading ? (
         <div className="flex justify-center">
-          <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
         </div>
       ) : (
         <button
           type="button"
-          className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 mr-2 mb-2"
+          className="mb-2 mr-2 inline-flex items-center rounded-lg bg-[#24292F] px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#24292F]/90 focus:outline-none focus:ring-4 focus:ring-[#24292F]/50 dark:hover:bg-[#050708]/30 dark:focus:ring-gray-500"
           disabled={isGitHubLoading}
           onClick={handleClick}
         >
@@ -115,7 +114,7 @@ export const GithubButton = () => {
 };
 const GithubIcon = () => (
   <svg
-    className="w-4 h-4 mr-2 -ml-1"
+    className="-ml-1 mr-2 h-4 w-4"
     aria-hidden="true"
     focusable="false"
     data-prefix="fab"
@@ -130,3 +129,25 @@ const GithubIcon = () => (
     ></path>
   </svg>
 );
+
+type PostImageProps = {
+  autherId: string;
+  imagePath: string;
+};
+export const PostImage = async ({ autherId, imagePath }: PostImageProps) => {
+  const [image, setImage] = useState("");
+  useEffect(() => {
+    (async () => {
+      const imageUrl = `V1/images/${autherId}/${imagePath}`;
+      const res = await fetch(
+        `http://localhost:3000/api/blog/download?path=${imageUrl}`,
+        { method: "GET" }
+      );
+      const response = await res.json();
+      console.log("url", response);
+      setImage(response);
+    })();
+  }, []);
+
+  return <img src={image} alt="" />;
+};

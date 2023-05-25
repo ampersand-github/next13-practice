@@ -2,7 +2,6 @@
 
 import { getData } from "@/app/(auth)/login/_components/get-data";
 import { Button } from "@/components/ui/button";
-import React from "react";
 
 type Props = { data: any };
 export const Data = async (props: Props) => {

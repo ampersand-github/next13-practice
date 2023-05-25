@@ -1,9 +1,7 @@
-import { authOptions } from "@/lib/auth-option";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { randomUUID } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
   console.log(1);

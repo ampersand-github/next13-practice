@@ -29,11 +29,13 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   const file = bucket.file(filePath);
   const options = {
     expires: Date.now() + 1 * 60 * 1000,
+    fields: { "x-goog-meta-test": "data" },
   };
 
   // 署名付きURLの生成
+  console.log("1");
   const [response] = await file.generateSignedPostPolicyV4(options);
-
+  console.log("2", response);
   // レスポンスの返却
   return new Response(JSON.stringify(response), { status: 200 });
 }

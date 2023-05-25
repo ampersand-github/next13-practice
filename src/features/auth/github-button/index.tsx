@@ -1,8 +1,8 @@
 "use client";
 
-import { GithubPresenter } from "./index.presenter";
 import { signIn } from "next-auth/react";
-import React, { useState } from "react";
+import { useState } from "react";
+import { GithubPresenter } from "./index.presenter";
 
 export const _GithubButton = () => {
   const [isGitHubLoading, setIsGitHubLoading] = useState(false);

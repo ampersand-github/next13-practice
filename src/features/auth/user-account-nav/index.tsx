@@ -12,7 +12,6 @@ import { AvatarProps } from "@radix-ui/react-avatar";
 import { User2Icon } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import React from "react";
 
 interface UserAccountNavProps {
   name?: string | null;

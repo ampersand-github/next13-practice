@@ -1,5 +1,3 @@
-import React from "react";
-
 interface GithubButtonPresenterProps {
   isLoading: boolean;
   handleSubmit: () => void;
@@ -13,12 +11,12 @@ export const GithubPresenter = ({
     <>
       {isLoading ? (
         <div className="flex justify-center">
-          <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
         </div>
       ) : (
         <button
           type="button"
-          className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 mr-2 mb-2"
+          className="mb-2 mr-2 inline-flex items-center rounded-lg bg-[#24292F] px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#24292F]/90 focus:outline-none focus:ring-4 focus:ring-[#24292F]/50 dark:hover:bg-[#050708]/30 dark:focus:ring-gray-500"
           disabled={isLoading}
           onClick={handleSubmit}
         >
@@ -32,7 +30,7 @@ export const GithubPresenter = ({
 
 const GithubIcon = () => (
   <svg
-    className="w-4 h-4 mr-2 -ml-1"
+    className="-ml-1 mr-2 h-4 w-4"
     aria-hidden="true"
     focusable="false"
     data-prefix="fab"
