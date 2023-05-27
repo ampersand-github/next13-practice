@@ -1,14 +1,13 @@
 "use client";
 
 import { CropperDialog } from "@/app/(root)/_components/edit-form/cropper-dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/app/_components/ui/button";
+import { Input } from "@/app/_components/ui/input";
+import { Textarea } from "@/app/_components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import imageCompression from "browser-image-compression";
-import { atom } from "jotai";
-import { useAtom } from "jotai/index";
-import Image from "next/image";
+import { atom, useAtom } from "jotai";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { ulid } from "ulid";
@@ -22,46 +21,65 @@ export const EditForm = () => {
     setValue,
   } = useForm<Schema>({ resolver: zodResolver(schema) });
   const [cropperImage] = useAtom(cropperImageAtom);
+  const router = useRouter();
 
   useEffect(() => {
     if (cropperImage) setValue("image", cropperImage);
   }, [cropperImage]);
 
   const onSubmit = async (data: Schema) => {
+    console.log("1");
     if (!data.image) return;
-    console.log("data", data);
-    // todo 名前考える
-    const result = await uploadImageToGCS(data.image);
-    console.log("result", result);
-    if (!result.ok) throw new Error("Failed to upload image.");
-    await fetch("/api/blog", {
+
+    console.log("2");
+    const imageName = ulid().toString();
+
+    // GCSに画像をアップロード
+    console.log("3");
+    console.log(data.image.size);
+
+    const resultGCP = await uploadToGCS(data.image, "thumbnail", imageName);
+    if (!resultGCP.ok) throw new Error("Failed to upload image.");
+
+    console.log("4");
+    // ブログを投稿
+    const result = await fetch("/api/blog", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...data, image: data.image.name }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...data, image: imageName }),
     });
+    console.log("5");
+    if (!result.ok) throw new Error("Failed to post blog.");
+    router.push("/");
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className={"min-w-full space-y-8"}>
       {/* 画像 */}
       <CropperDialog />
       {cropperImage && (
-        <Image src={URL.createObjectURL(cropperImage)} alt="preview" />
+        <img src={URL.createObjectURL(cropperImage)} alt="preview" />
       )}
       {errors.image?.message && <p>{errors.image?.message}</p>}
 
       {/* タイトル */}
-      <Input {...register("title")} />
-      {errors.title && <span>{errors.title.message}</span>}
+      <div className="space-y-4">
+        <label>記事のタイトル</label>
+        <Input {...register("title")} />
+        {errors.title && <span>{errors.title.message}</span>}
+      </div>
 
       {/* コンテキスト */}
-      <Textarea {...register("content")} />
-      {errors.content && <span>{errors.content.message}</span>}
+      <div className="space-y-4">
+        <label>記事の内容</label>
+        <Textarea {...register("content")} />
+        {errors.content && <span>{errors.content.message}</span>}
+      </div>
 
       {/* ボタン */}
-      <Button type="submit">Submit</Button>
+      <Button type="submit" className={"w-full"}>
+        投稿する
+      </Button>
     </form>
   );
 };
@@ -77,19 +95,26 @@ const schema = z.object({
   content: z
     .string()
     .min(1, { message: "入力必須です" })
-    .max(800, { message: "200文字以内で入力してください" }),
+    .max(2000, { message: "2000文字以内で入力してください" }),
 });
 
 type Schema = z.infer<typeof schema>;
 
 export const cropperImageAtom = atom<File | undefined>(undefined);
 
-const uploadImageToGCS = async (image: File): Promise<Response> => {
-  const resizedImage = await imageCompression(image, { maxSizeMB: 1 });
+const uploadToGCS = async (
+  image: File,
+  pathName: string,
+  fileName: string
+): Promise<Response> => {
+  const resizedImage = await imageCompression(image, {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 2028,
+  });
 
-  // todo URLとパラメータをどうもたせる？
+  // メモ；バケットを作成するごとに、CORS設定をしないといけない。
   const res = await fetch(
-    `${window.location.origin}/api/storage?file=${ulid().toString()}`,
+    `${window.location.origin}/api/storage/public/upload?path=${pathName}&file=${fileName}`,
     { method: "GET" }
   );
 

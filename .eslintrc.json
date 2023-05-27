@@ -8,17 +8,21 @@
     {
       "files": ["src/app/**/*.ts", "src/app/**/*.tsx"],
       "rules": {
-        "no-restricted-imports": ["error", {
-          "paths": [{
-            "name": "@/lib/db/sss",
-            "message": "Please do not import PrismaClient directly from '@prisma/client' in the pages directory."
-          },
-            {
-              "name": "@prisma/client/sss",
-              "message": "Please do not import PrismaClient directly from '@prisma/client' in the pages directory."
-            }
-          ]
-        }]
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@/lib/db/sss",
+                "message": "Please do not import PrismaClient directly from '@prisma/client' in the pages directory."
+              },
+              {
+                "name": "@prisma/client/sss",
+                "message": "Please do not import PrismaClient directly from '@prisma/client' in the pages directory."
+              }
+            ]
+          }
+        ]
       }
     }
   ]

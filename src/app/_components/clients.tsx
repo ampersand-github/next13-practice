@@ -1,18 +1,22 @@
 "use client";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/_components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/app/_components/ui/dropdown-menu";
 import { AvatarProps } from "@radix-ui/react-avatar";
 import { User2Icon } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface UserAccountNavProps {
   name?: string | null;
@@ -134,20 +138,39 @@ type PostImageProps = {
   autherId: string;
   imagePath: string;
 };
-export const PostImage = async ({ autherId, imagePath }: PostImageProps) => {
+
+export const PostImage: React.FC<PostImageProps> = ({
+  autherId,
+  imagePath,
+}) => {
   const [image, setImage] = useState("");
+
   useEffect(() => {
-    (async () => {
-      const imageUrl = `V1/images/${autherId}/${imagePath}`;
+    const fetchImage = async () => {
       const res = await fetch(
-        `http://localhost:3000/api/blog/download?path=${imageUrl}`,
+        `${window.location.origin}/api/storage/public/download?path=thumbnail/${autherId}/${imagePath}`,
         { method: "GET" }
       );
       const response = await res.json();
-      console.log("url", response);
       setImage(response);
-    })();
-  }, []);
+    };
+    fetchImage();
+  }, [autherId, imagePath]);
 
-  return <img src={image} alt="" />;
+  if (!image) return <>loading...</>;
+
+  return (
+    <Image
+      loading={"lazy"}
+      src={image}
+      alt="thumbnail"
+      width={1600}
+      height={900}
+      sizes="100vw"
+      style={{
+        width: "100%",
+        height: "auto",
+      }}
+    />
+  );
 };

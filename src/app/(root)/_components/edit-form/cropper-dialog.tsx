@@ -1,7 +1,7 @@
 "use client";
 
 import { cropperImageAtom } from "@/app/(root)/_components/edit-form/edit-form";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/_components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/app/_components/ui/dialog";
 import "cropperjs/dist/cropper.css"; // 必須 ないとレイアウトが崩れる
 import { useAtom } from "jotai";
 import React, { createRef } from "react";

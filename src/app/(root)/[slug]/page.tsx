@@ -1,7 +1,7 @@
-import { PostImage } from "@/components/clients";
+import { PostImage } from "@/app/_components/clients";
 import { db } from "@/lib/db";
 import { Suspense } from "react";
-
+import ReactMarkdown from "react-markdown";
 type params = { params: { slug: string } };
 
 export default async function ContentPage({ params }: params) {
@@ -50,16 +50,15 @@ export default async function ContentPage({ params }: params) {
             <div className="lg:pr-4">
               <div className="-ml-12 -mt-12 p-12 lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
                 <Suspense fallback={<>loading...</>}>
-                  {/* @ts-expect-error Async Server Component */}
                   <PostImage autherId={post.author.id} imagePath={post.image} />
                 </Suspense>
               </div>
               <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 {post.title}
               </h1>
-              <p className="mt-6 text-xl leading-8 text-gray-700">
+              <ReactMarkdown className="mt-6 text-xl leading-8 text-gray-700">
                 {post.content as string}
-              </p>
+              </ReactMarkdown>
             </div>
           </div>
         </div>

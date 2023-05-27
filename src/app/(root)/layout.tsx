@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/_components/ui/button";
 import { UserAccountNav } from "@/features/auth";
 import { getCurrentUser } from "@/lib/get-current-user";
 import Link from "next/link";
@@ -25,9 +25,6 @@ const Header = async () => {
     <header className="z-40 border-b border-gray-200 bg-background px-8 md:px-16">
       <div className="flex h-20 items-center justify-between py-6">
         <SiteTile />
-        <Button type={"button"}>
-          <Link href={"/modal"}>モーダル</Link>
-        </Button>
         <nav>
           {user ? (
             <div className="flex flex-auto space-x-8">

@@ -68,12 +68,14 @@
     "@trivago/prettier-plugin-sort-imports": "4.1.1",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-storybook": "^0.6.12",
+    "formidable": "^2.1.1",
     "husky": "^8.0.0",
     "jotai": "^2.1.0",
     "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.2",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "prisma": "^4.14.0",
+    "react-markdown": "^8.0.7",
     "storybook": "^7.0.11"
   }
 }

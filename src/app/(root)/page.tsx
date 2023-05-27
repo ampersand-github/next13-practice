@@ -1,13 +1,12 @@
-import { PostImage } from "@/components/clients";
+import { PostImage } from "@/app/_components/clients";
 import { db } from "@/lib/db";
 import Image from "next/image";
-import { Suspense } from "react";
 
 export default async function BlogEditPage() {
   const posts = await db.post.findMany({
     orderBy: { createdAt: "desc" },
     include: { author: true },
-    take: 12,
+    take: 4,
   });
 
   return (
@@ -27,17 +26,9 @@ export default async function BlogEditPage() {
             >
               <PostTimeStamp date={post.createdAt as Date} />
               <PostTitle id={post.id} title={post.title} />
-              <div className="flex grow items-center">
-                <Suspense fallback={<>loading...</>}>
-                  <a href={`/${post.id}`}>
-                    {/* @ts-expect-error Async Server Component */}
-                    <PostImage
-                      autherId={post.author.id}
-                      imagePath={post.image}
-                    />
-                  </a>
-                </Suspense>
-              </div>
+              <a href={`/${post.id}`}>
+                <PostImage autherId={post.author.id} imagePath={post.image} />
+              </a>
               <PostContent id={post.id} content={post.content as string} />
               <PostAuthor
                 image={post.author.image}
@@ -109,11 +100,14 @@ type PostAuthorProps = {
   image: string | null;
   autherName: string | null;
 };
+
 const PostAuthor = ({ image, autherName }: PostAuthorProps) => {
   return (
     <div className="relative mt-4 flex items-center gap-x-2">
       {image && (
         <Image
+          width={32}
+          height={32}
           src={image}
           alt="avatar"
           className="h-8 w-8 rounded-full bg-gray-50"

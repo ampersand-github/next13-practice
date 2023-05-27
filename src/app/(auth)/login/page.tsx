@@ -1,4 +1,4 @@
-import { GithubButton } from "@/components/clients";
+import { GithubButton } from "@/app/_components/clients";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
