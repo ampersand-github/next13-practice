@@ -58,7 +58,7 @@ export const EditForm = () => {
       {/* 画像 */}
       <CropperDialog />
       {cropperImage && (
-        <img src={URL.createObjectURL(cropperImage)} alt="preview" />
+        <img src={URL.createObjectURL(cropperImage) ?? ""} alt="preview" />
       )}
       {errors.image?.message && <p>{errors.image?.message}</p>}
 
