@@ -1,5 +1,4 @@
 import { PartsA1 } from "@/app/(colocation)/colocation-a/_components";
-// import { PartsA3 } from "@/app/(colocation)/colocation-a/_components/parts-a-3/parts-a-3";
 import { Button } from "@/app/_components/ui/button";
 
 /**

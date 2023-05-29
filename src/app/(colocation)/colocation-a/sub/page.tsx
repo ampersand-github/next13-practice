@@ -8,7 +8,7 @@ import { Button } from "@/app/_components/ui/button";
 export default async function Page() {
   return (
     <div>
-      <h1>Co-location A</h1>
+      <h1>Co-location A sub</h1>
       <PartsA1 />
       <PartsA2 />
       <PartsA3 />
